@@ -6,6 +6,7 @@ interface ButtonProps {
   disabled?: boolean
   loading?: boolean
   onClick?: () => void
+  type?: 'button' | 'submit' | 'reset'
   children: JSX.Element
   class?: string
 }
@@ -31,6 +32,7 @@ const Button: Component<ButtonProps> = (props) => {
   
   return (
     <button
+      type={props.type || 'button'}
       class={`${baseClasses} ${variants[variant()]} ${sizes[size()]} ${props.class || ''}`}
       disabled={props.disabled || props.loading}
       onClick={props.onClick}
