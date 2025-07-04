@@ -27,5 +27,6 @@ impl Database {
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub database: std::sync::Arc<std::sync::Mutex<Database>>,
+    #[allow(dead_code)] // TODO: Will be used when JWT authentication is implemented
     pub jwt_secret: String,
 }

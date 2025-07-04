@@ -96,11 +96,11 @@ async fn main() {
             run_migrations().await.unwrap();
         }
         Some(Commands::CreateUser { email, password, first_name, last_name }) => {
-            println!("Creating user: {}", email);
+            println!("Creating user: {email}");
             create_user_cli(email, password, first_name.as_deref(), last_name.as_deref()).await.unwrap();
         }
         Some(Commands::SetSuperadmin { email }) => {
-            println!("Setting {} as superadmin", email);
+            println!("Setting {email} as superadmin");
             set_superadmin_cli(email).await.unwrap();
         }
         None => {
@@ -184,13 +184,13 @@ async fn create_user_cli(
     )?;
     
     println!("User created successfully!");
-    println!("User ID: {}", user_id);
-    println!("Email: {}", email);
+    println!("User ID: {user_id}");
+    println!("Email: {email}");
     if let Some(name) = first_name {
-        println!("First Name: {}", name);
+        println!("First Name: {name}");
     }
     if let Some(name) = last_name {
-        println!("Last Name: {}", name);
+        println!("Last Name: {name}");
     }
     
     Ok(())
@@ -206,13 +206,13 @@ async fn set_superadmin_cli(email: &str) -> Result<(), Box<dyn std::error::Error
     // Find the user by email
     let mut stmt = conn.prepare("SELECT id FROM users WHERE email = ?1")?;
     let user_id: String = stmt.query_row([email], |row| {
-        Ok(row.get(0)?)
+        row.get(0)
     })?;
     
     // Get admin permission ID
     let mut stmt = conn.prepare("SELECT id FROM permissions WHERE name = 'admin'")?;
     let admin_permission_id: String = stmt.query_row([], |row| {
-        Ok(row.get(0)?)
+        row.get(0)
     })?;
     
     // Add admin permission to user (ignore if already exists)
@@ -228,10 +228,10 @@ async fn set_superadmin_cli(email: &str) -> Result<(), Box<dyn std::error::Error
         ],
     ) {
         Ok(_) => {
-            println!("Successfully granted admin permissions to {}", email);
+            println!("Successfully granted admin permissions to {email}");
         }
         Err(rusqlite::Error::SqliteFailure(err, _)) if err.code == rusqlite::ErrorCode::ConstraintViolation => {
-            println!("User {} already has admin permissions", email);
+            println!("User {email} already has admin permissions");
         }
         Err(e) => return Err(e.into()),
     }
